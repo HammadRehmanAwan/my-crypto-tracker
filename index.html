@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Crypto Tracker & AI Insights</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; 
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+         .stat-card {
+            background-color: #1F2937; /* slate-800 */
+            border-radius: 0.75rem; /* rounded-xl */
+            padding: 1.5rem; /* p-6 */
+            margin-bottom: 1.5rem; /* mb-6 */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .section-title {
+            font-size: 2.25rem; /* text-4xl */
+            font-weight: 700; /* bold */
+            margin-bottom: 1.5rem; /* mb-6 */
+            text-align: center;
+        }
+        .sub-section-title {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 600; /* semibold */
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        .highlight-text {
+            font-weight: 600; /* semibold */
+        }
+        .value-positive {
+            color: #22C55E; /* green-500 */
+        }
+        .value-negative {
+            color: #EF4444; /* red-500 */
+        }
+        .value-neutral {
+            color: #EAB308; /* amber-500 */
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-900 text-slate-100">
+
+    <header class="py-10 px-4 md:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-sky-400">Dynamic Crypto Tracker</h1>
+        <p class="text-xl text-slate-300 mt-2">Real-time Insights & AI Commentary</p>
+        <div class="mt-6 flex flex-col md:flex-row items-center justify-center gap-4">
+            <input type="text" id="cryptoSearchInput" placeholder="Search by ID (e.g., bitcoin, ethereum, aixbt)" class="p-3 rounded-lg bg-slate-700 text-slate-100 placeholder-slate-400 border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500 w-full md:w-96">
+            <button id="searchCryptoBtn" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg w-full md:w-auto">
+                Search Crypto
+            </button>
+        </div>
+        <p id="searchStatus" class="mt-2 text-sm text-slate-400"></p>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="introduction" class="mb-12 stat-card">
+            <h2 class="sub-section-title text-sky-400">I. Introduction to <span id="introCryptoName">AIXBT</span></h2>
+            <p class="text-slate-300 leading-relaxed" id="introDescription">
+                AIXBT is an AI-powered tool designed to offer cryptocurrency price predictions and market insights by analyzing discussions on various platforms, including social media. Its core function is to act as an automated AI agent, providing data-driven insights and identifying potential trading opportunities for users who hold a minimum amount of AIXBT tokens. As an ERC-20 token deployed on the BASE network, AIXBT serves as the key utility token for its platform, granting access to AI-generated market predictions and research reports.
+            </p>
+        </section>
+
+        <section id="market-overview" class="mb-12">
+            <h2 class="section-title text-sky-400">II. <span id="marketOverviewCryptoName">AIXBT</span> Market Overview</h2>
+            <div class="stat-card">
+                <h3 class="sub-section-title text-amber-400 mb-6">Key Market Statistics (as of May 25, 2025)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-slate-700 p-4 rounded-lg text-center">
+                        <p class="text-sm text-slate-400">Current Price</p>
+                        <p class="text-3xl font-bold text-sky-300" id="currentPrice">$0.198552</p>
+                    </div>
+                    <div class="bg-slate-700 p-4 rounded-lg text-center">
+                        <p class="text-sm text-slate-400">24h Price Change</p>
+                        <p class="text-3xl font-bold" id="priceChange24h">+14.00%</p>
+                        <p class="text-xs text-slate-500">(Note: Varies across exchanges)</p>
+                    </div>
+                    <div class="bg-slate-700 p-4 rounded-lg text-center">
+                        <p class="text-sm text-slate-400">Market Cap</p>
+                        <p class="text-3xl font-bold text-sky-300" id="marketCap">$184M - $195M</p>
+                    </div>
+                    <div class="bg-slate-700 p-4 rounded-lg text-center">
+                        <p class="text-sm text-slate-400">24h Trading Volume</p>
+                        <p class="text-3xl font-bold text-sky-300" id="volume24h">$73M - $117M</p>
+                    </div>
+                    <div class="bg-slate-700 p-4 rounded-lg text-center">
+                        <p class="text-sm text-slate-400">Circulating Supply</p>
+                        <p class="text-3xl font-bold text-sky-300" id="circulatingSupply">~928M AIXBT</p>
+                    </div>
+                    <div class="bg-slate-700 p-4 rounded-lg text-center">
+                        <p class="text-sm text-slate-400">Max Supply</p>
+                        <p class="text-3xl font-bold text-sky-300" id="maxSupply">1B AIXBT</p>
+                    </div>
+                </div>
+
+                <h3 class="sub-section-title text-amber-400 mt-8 mb-4">Recent Price Performance</h3>
+                <div class="chart-container" style="height: 350px;">
+                    <canvas id="pricePerformanceChart"></canvas>
+                </div>
+                <p class="text-slate-400 mt-4 text-sm text-center" id="pricePerformanceChartCaption">AIXBT has shown significant gains over the past month and year, despite recent volatility.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                    <div class="bg-slate-700 p-4 rounded-lg">
+                        <p class="text-lg font-semibold text-sky-300">All-Time High</p>
+                        <p class="text-2xl value-neutral" id="ath">$0.942578</p>
+                        <p class="text-sm text-slate-400 mt-2">Date: <span id="athDate">Jan 16, 2025</span></p>
+                        <p class="text-sm text-slate-400">Currently <span id="athFromCurrent" class="value-negative">-77.7%</span> from ATH</p>
+                    </div>
+                    <div class="bg-slate-700 p-4 rounded-lg">
+                        <p class="text-lg font-semibold text-sky-300">All-Time Low</p>
+                        <p class="text-2xl value-neutral" id="atl">$0.02381257</p>
+                        <p class="text-sm text-slate-400 mt-2">Date: <span id="atlDate">Nov 19, 2024</span></p>
+                        <p class="text-sm text-slate-400">Currently <span id="atlFromCurrent" class="value-positive">+781.9%</span> from ATL</p>
+                    </div>
+                </div>
+
+                <h3 class="sub-section-title text-amber-400 mt-8 mb-4">Volatility & Project Context</h3>
+                <p class="text-slate-300 leading-relaxed" id="volatilityContext">
+                    Despite AIXBT being marketed as an AI-powered tool for market insights, its own price history reveals extreme volatility. The token surged to an All-Time High of $0.94 in January 2025, then significantly declined to current levels around $0.20, yet remains substantially above its All-Time Low. This pattern, along with a "short history risk," a "pseudonymous developer," and a notable security exploit in March 2025 (loss of >$100k ETH), highlights that AIXBT is a high-risk asset. The initial rapid price appreciation was likely fueled by speculative capital drawn to the "AI narrative," leading to a classic "blow-off top."
+                </p>
+            </div>
+        </section>
+
+        <section id="technical-analysis" class="mb-12">
+            <h2 class="section-title text-sky-400">III. <span id="techAnalysisCryptoName">AIXBT</span> Short-Term Technical Analysis (Next 24 Hours)</h2>
+            <div class="stat-card">
+                <h3 class="sub-section-title text-amber-400 mb-6">Current Technical Indicators</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-slate-700 p-4 rounded-lg text-center">
+                        <p class="text-sm text-slate-400">RSI (14-day)</p>
+                        <p class="text-3xl font-bold value-neutral" id="rsi">57</p>
+                        <p class="text-xs text-slate-400" id="rsiNotes">Neutral, climbing, higher lows</p>
+                    </div>
+                    <div class="bg-slate-700 p-4 rounded-lg text-center">
+                        <p class="text-sm text-slate-400">MACD</p>
+                        <p class="text-xl font-bold value-neutral mt-2" id="macd">Bearish momentum fading</p>
+                        <p class="text-xs text-slate-400" id="macdNotes">No clear bullish shift yet</p>
+                    </div>
+                    <div class="bg-slate-700 p-4 rounded-lg text-center">
+                        <p class="text-sm text-slate-400">24h Volume Trend</p>
+                        <p class="text-3xl font-bold value-positive" id="volumeTrend">+120%</p>
+                        <p class="text-xs text-slate-400" id="volumeTrendNotes">(to $97M, confirms buying interest)</p>
+                    </div>
+                </div>
+
+                <h3 class="sub-section-title text-amber-400 mb-4">Immediate Support & Resistance Levels</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-slate-300">
+                        <thead class="text-xs text-slate-100 uppercase bg-slate-700">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Level Type</th>
+                                <th scope="col" class="px-6 py-3">Price (USD)</th>
+                                <th scope="col" class="px-6 py-3">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="supportResistanceTableBody">
+                            </tbody>
+                    </table>
+                </div>
+                
+                <h3 class="sub-section-title text-amber-400 mt-8 mb-4">Analysis of Recent Price Patterns</h3>
+                <p class="text-slate-300 leading-relaxed" id="pricePatternAnalysis">
+                    AIXBT has recently demonstrated strong bullish price action, characterized by a <span class="highlight-text text-green-400">"bullish breakout in action"</span> from the $0.17 demand zone. This involved strong bullish candles and flipping the intraday structure to the upside, signaling renewed buying interest. A <span class="highlight-text text-green-400">"Falling Wedge Breakout"</span> has also been confirmed, a classic bullish technical formation indicating a potential shift from downtrend to uptrend, supported by good trading volume. However, a <span class="highlight-text text-yellow-400">"small rejection candle"</span> has been noted, suggesting a potential retest of recently gained levels (e.g., $0.193 - $0.197) before a continuation of the upward trend. Such pullbacks are common and can be healthy consolidation.
+                </p>
+            </div>
+        </section>
+
+        <section id="broader-market-context" class="mb-12">
+            <h2 class="section-title text-sky-400">IV. Broader Market Context & Influencing Factors</h2>
+            <div class="stat-card">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="sub-section-title text-amber-400 mb-4">Overall Crypto Market Sentiment</h3>
+                        <div class="chart-container" style="height:250px;">
+                            <canvas id="fearGreedChart"></canvas>
+                        </div>
+                        <p class="text-slate-300 mt-3 text-center" id="fearGreedCaption">Crypto Fear & Greed Index: <span class="font-bold text-2xl value-positive" id="fearGreedValue">74 (Greed)</span> as of May 24, 2025. High optimism, but can precede corrections.</p>
+                    </div>
+                    <div>
+                        <h3 class="sub-section-title text-amber-400 mb-4">The "AI in Blockchain" Narrative</h3>
+                        <p class="text-slate-300 leading-relaxed mb-2" id="aiNarrativeText">
+                            "Artificial Intelligence (AI) in Blockchain" is a <span class="highlight-text text-sky-300">top narrative</span> for the next crypto bull run in 2025, emerging as a "high-conviction investment theme." AIXBT has directly benefited from this trend, experiencing significant mindshare and price surges correlated with the broader AI sector's rise. Whales are reportedly accumulating AI crypto tokens, including AIXBT. This strong sectoral tailwind provides a significant fundamental demand driver for AIXBT, potentially offsetting some project-specific risks.
+                        </p>
+                    </div>
+                </div>
+                 <div class="mt-8">
+                    <h3 class="sub-section-title text-amber-400 mb-4">Key Influences</h3>
+                     <ul class="list-disc list-inside text-slate-300 space-y-2" id="keyInfluencesList">
+                        <li><span class="highlight-text text-sky-300">Bitcoin & Ethereum Performance:</span> Strong BTC (new ATHs) and ETH (ETF inflows) provide a favorable backdrop for altcoins like AIXBT.</li>
+                        <li><span class="highlight-text text-sky-300">Whale Activity:</span> Large BTC withdrawals from exchanges suggest accumulation. Mixed signals for ETH.</li>
+                        <li><span class="highlight-text text-yellow-400">Macroeconomic Factors:</span> Potential Fed rate cuts in 2025 are positive, but current economic uncertainty (bond yields, deficits) poses risks. Crypto remains sensitive to global "risk-off" sentiment.</li>
+                        <li><span class="highlight-text text-green-400">Regulatory Landscape:</span> Increasing clarity and supportive measures (e.g., US stablecoin bills, bank custody clarifications) are fundamentally bullish long-term.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="price-expectations" class="mb-12">
+            <h2 class="section-title text-sky-400">V. 24-Hour Price Expectations for <span id="priceExpectationCryptoName">AIXBT</span></h2>
+            <div class="stat-card">
+                <p class="text-slate-300 leading-relaxed mb-6" id="priceExpectationIntro">
+                    Considering AIXBT's current price around $0.198552, technical indicators, and broader market sentiment, the following price expectations are projected for the next 24 hours. The "Greed" sentiment and strong AI narrative support upside potential, while the possibility of retests suggests potential dips.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                    <div class="bg-slate-700 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-red-400 mb-2">Lowest Expected Price</h3>
+                        <p class="text-4xl font-bold" id="lowestExpectedPrice">$0.170 - $0.182</p>
+                        <p class="text-sm text-slate-400 mt-2" id="lowestExpectedNotes">If immediate support fails, potential retest of $0.182 (EMA) or demand zone around $0.170.</p>
+                    </div>
+                    <div class="bg-slate-700 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-sky-300 mb-2">Expected Price Range</h3>
+                        <p class="text-4xl font-bold" id="expectedPriceRange">$0.182 - $0.219</p>
+                        <p class="text-sm text-slate-400 mt-2" id="expectedPriceRangeNotes">Likely trading corridor based on support and initial resistance targets.</p>
+                    </div>
+                    <div class="bg-slate-700 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-green-400 mb-2">Highest Expected Price</h3>
+                        <p class="text-4xl font-bold" id="highestExpectedPrice">$0.219 - $0.230</p>
+                        <p class="text-sm text-slate-400 mt-2" id="highestExpectedNotes">If momentum continues above $0.205, targeting $0.219, potentially $0.23.</p>
+                    </div>
+                </div>
+                <div class="mt-8 chart-container" style="height: 150px;">
+                     <canvas id="expectedPriceRangeChart"></canvas>
+                </div>
+                 <p class="text-slate-400 mt-2 text-sm text-center" id="expectedPriceRangeChartCaption">Visual representation of the expected 24-hour price range for AIXBT.</p>
+
+                <div class="mt-8 text-center">
+                    <button id="generateCommentaryBtn" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg">
+                        ✨ Get AI Price Commentary
+                    </button>
+                    <div id="commentaryOutput" class="mt-6 p-4 bg-slate-700 rounded-lg text-slate-200 text-left hidden">
+                        <p class="text-sm text-slate-400 mb-2">AI-Generated Commentary:</p>
+                        <p id="commentaryText" class="leading-relaxed"></p>
+                        <div id="commentaryLoading" class="hidden text-center text-sky-400 mt-2">Generating commentary...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="catalysts-risks" class="mb-12">
+            <h2 class="section-title text-sky-400">VI. Potential Catalysts & Risks (Next 24 Hours)</h2>
+            <div class="stat-card">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="sub-section-title text-green-400">Potential Catalysts (Upside)</h3>
+                        <ul class="list-disc list-inside text-slate-300 space-y-2" id="catalystsList">
+                            <li>Continued bullish momentum in Bitcoin & Ethereum.</li>
+                            <li>Persistent strength of the "AI in Blockchain" narrative.</li>
+                            <li>Sustained increase in AIXBT buying volume on breakouts.</li>
+                            <li>Positive broader market regulatory news.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="sub-section-title text-red-400">Potential Risks (Downside)</h3>
+                        <ul class="list-disc list-inside text-slate-300 space-y-2" id="risksList">
+                            <li>Broader crypto market correction (Greed levels are high).</li>
+                            <li>Negative macroeconomic news or "risk-off" sentiment.</li>
+                            <li>Profit-taking due to AIXBT's recent significant gains.</li>
+                            <li>Project-specific concerns (e.g., security, short history).</li>
+                            <li>Low liquidity at critical support levels if breached.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="conclusion" class="mb-12 stat-card">
+            <h2 class="sub-section-title text-sky-400">VII. Conclusion</h2>
+            <p class="text-slate-300 leading-relaxed mb-3" id="conclusionText1">
+                AIXBT is currently in a bullish phase, supported by strong technical breakouts and the favorable "AI in Blockchain" narrative. The broader crypto market also exhibits "Greed," indicating strong investor optimism.
+            </p>
+            <p class="text-slate-300 leading-relaxed mb-3" id="conclusionText2">
+                For the next 24 hours, AIXBT is expected to trade within a range of <span class="highlight-text text-sky-300" id="conclusionRange">$0.182 to $0.219</span>.
+                The highest expected price could reach <span class="highlight-text text-green-400" id="conclusionHighest">$0.219 to $0.230</span> with sustained bullish momentum.
+                Conversely, the lowest expected price could fall to <span class="highlight-text text-red-400" id="conclusionLowest">$0.170 to $0.182</span> if key supports are breached.
+            </p>
+            <p class="text-slate-300 leading-relaxed" id="conclusionText3">
+                Investors should monitor key support/resistance levels and be mindful of AIXBT's inherent volatility and broader market risks. A cautious approach is warranted.
+            </p>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-8 px-4">
+        <p class="text-sm text-slate-500">Infographic based on market data. For illustrative and informational purposes only. Not financial advice.</p>
+        <p class="text-xs text-slate-600 mt-1">Generated: May 26, 2025</p>
+    </footer>
+
+    <script>
+        let currentCryptoId = 'aixbt';
+        let pricePerformanceChartInstance;
+        let fearGreedChartInstance;
+        let expectedPriceRangeChartInstance;
+
+        // Simulated Data for demonstration
+        const simulatedData = {
+            'aixbt': {
+                name: 'AIXBT',
+                description: 'AIXBT is an AI-powered tool designed to offer cryptocurrency price predictions and market insights by analyzing discussions on various platforms, including social media. Its core function is to act as an automated AI agent, providing data-driven insights and identifying potential trading opportunities for users who hold a minimum amount of AIXBT tokens. As an ERC-20 token deployed on the BASE network, AIXBT serves as the key utility token for its platform, granting access to AI-generated market predictions and research reports.',
+                currentPrice: 0.198552,
+                priceChange24h: 14.00,
+                marketCap: '184M - 195M',
+                volume24h: '73M - 117M',
+                circulatingSupply: '928M AIXBT',
+                maxSupply: '1B AIXBT',
+                ath: 0.942578,
+                athDate: 'Jan 16, 2025',
+                atl: 0.02381257,
+                atlDate: 'Nov 19, 2024',
+                priceChanges: { '24H Change': 14.00, '7-Day Change': 23.60, '1-Month Change': 40.37, '1-Year Change': 271.13 },
+                rsi: 57,
+                rsiNotes: 'Neutral, climbing, higher lows',
+                macd: 'Bearish momentum fading',
+                macdNotes: 'No clear bullish shift yet',
+                volumeTrend: '+120%',
+                volumeTrendNotes: '(to $97M, confirms buying interest)',
+                supportResistance: [
+                    { type: 'Immediate Support', price: '$0.1820', notes: 'EMA Confluence' },
+                    { type: 'Immediate Support', price: '$0.1870 - $0.1885', notes: 'Current Trading Range' },
+                    { type: 'Local Support', price: '$0.1500', notes: 'Held since early May' },
+                    { type: 'Immediate Resistance', price: '$0.1890, $0.1950', notes: 'Key short-term hurdles' },
+                    { type: 'Further Resistance', price: '$0.2050', notes: 'Next target if breakout' },
+                    { type: 'Critical Resistance', price: '$0.23 - $0.24', notes: 'Previous higher highs' }
+                ],
+                pricePatternAnalysis: 'AIXBT has recently demonstrated strong bullish price action, characterized by a <span class="highlight-text text-green-400">"bullish breakout in action"</span> from the $0.17 demand zone. This involved strong bullish candles and flipping the intraday structure to the upside, signaling renewed buying interest. A <span class="highlight-text text-green-400">"Falling Wedge Breakout"</span> has also been confirmed, a classic bullish technical formation indicating a potential shift from downtrend to uptrend, supported by good trading volume. However, a <span class="highlight-text text-yellow-400">"small rejection candle"</span> has been noted, suggesting a potential retest of recently gained levels (e.g., $0.193 - $0.197) before a continuation of the upward trend. Such pullbacks are common and can be healthy consolidation.',
+                fearGreedIndex: 74,
+                aiNarrativeText: '"Artificial Intelligence (AI) in Blockchain" is a <span class="highlight-text text-sky-300">top narrative</span> for the next crypto bull run in 2025, emerging as a "high-conviction investment theme." AIXBT has directly benefited from this trend, experiencing significant mindshare and price surges correlated with the broader AI sector\'s rise. Whales are reportedly accumulating AI crypto tokens, including AIXBT. This strong sectoral tailwind provides a significant fundamental demand driver for AIXBT, potentially offsetting some project-specific risks.',
+                keyInfluences: [
+                    '<span>Bitcoin & Ethereum Performance:</span> Strong BTC (new ATHs) and ETH (ETF inflows) provide a favorable backdrop for altcoins like AIXBT.',
+                    '<span>Whale Activity:</span> Large BTC withdrawals from exchanges suggest accumulation. Mixed signals for ETH.',
+                    '<span>Macroeconomic Factors:</span> Potential Fed rate cuts in 2025 are positive, but current economic uncertainty (bond yields, deficits) poses risks. Crypto remains sensitive to global "risk-off" sentiment.',
+                    '<span>Regulatory Landscape:</span> Increasing clarity and supportive measures (e.g., US stablecoin bills, bank custody clarifications) are fundamentally bullish long-term.'
+                ],
+                lowestExpectedPrice: '$0.170 - $0.182',
+                lowestExpectedNotes: 'If immediate support fails, potential retest of $0.182 (EMA) or demand zone around $0.170.',
+                expectedPriceRange: '$0.182 - $0.219',
+                expectedPriceRangeNotes: 'Likely trading corridor based on support and initial resistance targets.',
+                highestExpectedPrice: '$0.219 - $0.230',
+                highestExpectedNotes: 'If momentum continues above $0.205, targeting $0.219, potentially $0.23.',
+                catalysts: [
+                    'Continued bullish momentum in Bitcoin & Ethereum.',
+                    'Persistent strength of the "AI in Blockchain" narrative.',
+                    'Sustained increase in AIXBT buying volume on breakouts.',
+                    'Positive broader market regulatory news.'
+                ],
+                risks: [
+                    'Broader crypto market correction (Greed levels are high).',
+                    'Negative macroeconomic news or "risk-off" sentiment.',
+                    'Profit-taking due to AIXBT\'s recent significant gains.',
+                    'Project-specific concerns (e.g., security, short history).',
+                    'Low liquidity at critical support levels if breached.'
+                ],
+                conclusionText1: 'AIXBT is currently in a bullish phase, supported by strong technical breakouts and the favorable "AI in Blockchain" narrative. The broader crypto market also exhibits "Greed," indicating strong investor optimism.',
+                conclusionText2: 'For the next 24 hours, AIXBT is expected to trade within a range of <span class="highlight-text text-sky-300" id="conclusionRange">$0.182 to $0.219</span>. The highest expected price could reach <span class="highlight-text text-green-400" id="conclusionHighest">$0.219 to $0.230</span> with sustained bullish momentum. Conversely, the lowest expected price could fall to <span class="highlight-text text-red-400" id="conclusionLowest">$0.170 to $0.182</span> if key supports are breached.',
+                conclusionText3: 'Investors should monitor key support/resistance levels and be mindful of AIXBT\'s inherent volatility and broader market risks. A cautious approach is warranted.'
+            },
+            'bitcoin': {
+                name: 'Bitcoin',
+                description: 'Bitcoin is the world\'s first decentralized digital currency, operating on a peer-to-peer network without the need for intermediaries. It is a store of value and a medium of exchange, often referred to as "digital gold," and is the largest cryptocurrency by market capitalization.',
+                currentPrice: 109500.00,
+                priceChange24h: 1.80,
+                marketCap: '2.18T',
+                volume24h: '35B - 50B',
+                circulatingSupply: '19.7M BTC',
+                maxSupply: '21M BTC',
+                ath: 111977.00,
+                athDate: 'May 24, 2025',
+                atl: 65.53,
+                atlDate: 'Jul 05, 2013',
+                priceChanges: { '24H Change': 1.80, '7-Day Change': 6.31, '1-Month Change': 15.20, '1-Year Change': 180.50 },
+                rsi: 67,
+                rsiNotes: 'Bullish bias, approaching overbought',
+                macd: 'Converging (Indecisive)',
+                macdNotes: 'No clear trend, consolidation',
+                volumeTrend: 'Stable',
+                volumeTrendNotes: '(Consolidating after ATH)',
+                supportResistance: [
+                    { type: 'Immediate Support', price: '$106,406', notes: 'Recent consolidation low' },
+                    { type: 'Major Support', price: '$100,000', notes: 'Psychological and technical threshold' },
+                    { type: 'Immediate Resistance', price: '$111,900 - $112,000', notes: 'Recent All-Time High' },
+                    { type: 'Major Resistance', price: '$120,000', notes: 'Next psychological target' }
+                ],
+                pricePatternAnalysis: 'Bitcoin recently achieved a new All-Time High and is currently in a healthy consolidation phase. This allows the market to absorb recent gains. Historical patterns suggest bull markets are often punctuated by corrections after major peaks. Current consolidation could resolve downwards, aligning with historical precedents.',
+                fearGreedIndex: 74,
+                aiNarrativeText: 'Bitcoin remains the leading cryptocurrency, driven by increasing institutional adoption and significant ETF inflows. Its status as "digital gold" continues to attract long-term investors, providing a strong fundamental demand driver for the broader crypto market.',
+                keyInfluences: [
+                    '<span>Institutional Adoption:</span> Growing interest from traditional finance.',
+                    '<span>Halving Event:</span> Reduced supply post-halving supports long-term price.',
+                    '<span>Macroeconomic Factors:</span> Sensitive to global risk-off sentiment, but often seen as a hedge.',
+                    '<span>Regulatory Clarity:</span> Increasing clarity in major jurisdictions is positive.'
+                ],
+                lowestExpectedPrice: '$105,000 - $106,400',
+                lowestExpectedNotes: 'Potential retest of immediate support after recent ATH.',
+                expectedPriceRange: '$106,400 - $111,900',
+                expectedPriceRangeNotes: 'Likely trading within its consolidation range.',
+                highestExpectedPrice: '$111,900 - $115,000',
+                highestExpectedNotes: 'If current ATH is broken, next target is $115k.',
+                catalysts: [
+                    'Strong institutional buying pressure.',
+                    'Breakout above ATH with significant volume.',
+                    'Positive macroeconomic news.'
+                ],
+                risks: [
+                    'Significant profit-taking after ATH.',
+                    'Broader market correction affecting all assets.',
+                    'Unexpected negative macroeconomic events.'
+                ],
+                conclusionText1: 'Bitcoin is in a consolidation phase after reaching new All-Time Highs, supported by strong institutional interest and long-term accumulation.',
+                conclusionText2: 'For the next 24 hours, Bitcoin is expected to trade within a range of <span class="highlight-text text-sky-300" id="conclusionRange">$106,400 to $111,900</span>. The highest expected price could reach <span class="highlight-text text-green-400" id="conclusionHighest">$111,900 to $115,000</span>. Conversely, the lowest expected price could fall to <span class="highlight-text text-red-400" id="conclusionLowest">$105,000 to $106,400</span> if immediate support is breached.',
+                conclusionText3: 'While long-term bullish, short-term volatility is possible. Investors should monitor key levels.'
+            },
+            'ethereum': {
+                name: 'Ethereum',
+                description: 'Ethereum is a decentralized, open-source blockchain with smart contract functionality. It is the second-largest cryptocurrency by market capitalization and serves as a foundational platform for decentralized applications (dApps) and various blockchain projects.',
+                currentPrice: 2510.00,
+                priceChange24h: 0.55,
+                marketCap: '305B - 308B',
+                volume24h: '12B - 13B',
+                circulatingSupply: '120M ETH',
+                maxSupply: 'Unlimited (deflationary)',
+                ath: 4891.70,
+                athDate: 'Nov 16, 2021',
+                atl: 0.432979,
+                atlDate: 'Oct 20, 2015',
+                priceChanges: { '24H Change': 0.55, '7-Day Change': 1.55, '1-Month Change': 42.08, '1-Year Change': 120.00 },
+                rsi: 48,
+                rsiNotes: 'Bearish divergence on 4H, below 50-zone',
+                macd: 'Increasing bearish momentum',
+                macdNotes: 'Sellers gaining control',
+                volumeTrend: 'Decreasing',
+                volumeTrendNotes: '(Reduced network activity)',
+                supportResistance: [
+                    { type: 'Immediate Support', price: '$2,503', notes: '0.5 Fibonacci retracement' },
+                    { type: 'Major Support', price: '$2,450', notes: 'Key short-term support' },
+                    { type: 'Critical Support', price: '$2,300', notes: '200 EMA' },
+                    { type: 'Immediate Resistance', price: '$2,580 - $2,600', notes: 'Current consolidation resistance' },
+                    { type: 'Major Resistance', price: '$2,881', notes: '0.382 Fibonacci retracement' },
+                    { type: 'Critical Resistance', price: '$3,000 - $3,080', notes: 'Psychological barrier' }
+                ],
+                pricePatternAnalysis: 'Ethereum is struggling to clear key resistance levels ($2,700), showing signs of weakening momentum. A clear bearish divergence on the 4-hour RSI and increasing bearish MACD momentum suggest a loss of buying pressure and potential correction. Exhaustion of short liquidation "fuel" may also contribute to a pullback.',
+                fearGreedIndex: 74,
+                aiNarrativeText: 'Ethereum continues to be a central pillar of the decentralized finance (DeFi) and NFT ecosystems. Its transition to Proof-of-Stake and ongoing development of Layer 2 solutions enhance its scalability and efficiency, maintaining its position as a critical platform for innovation in the blockchain space. Recent ETF inflows also signal growing institutional confidence.',
+                keyInfluences: [
+                    '<span>DeFi & NFT Ecosystem:</span> Continued growth drives network activity.',
+                    '<span>Scalability Upgrades:</span> Progress on Layer 2 solutions and sharding.',
+                    '<span>Institutional Inflows:</span> Growing interest from traditional finance via ETFs.',
+                    '<span>Regulatory Environment:</span> Clarity on ETH\'s status as a commodity.'
+                ],
+                lowestExpectedPrice: '$2,400 - $2,450',
+                lowestExpectedNotes: 'Potential retest of key immediate support levels.',
+                expectedPriceRange: '$2,450 - $2,580',
+                expectedPriceRangeNotes: 'Likely trading within its current consolidation range.',
+                highestExpectedPrice: '$2,580 - $2,650',
+                highestExpectedNotes: 'If current resistance is broken, next target is $2,650.',
+                catalysts: [
+                    'Successful breakout above $2,700 resistance.',
+                    'Continued strong institutional ETF inflows.',
+                    'Positive news regarding network upgrades.'
+                ],
+                risks: [
+                    'Confirmed bearish divergence playing out.',
+                    'Significant selling pressure from whales.',
+                    'Broader market correction affecting altcoins.'
+                ],
+                conclusionText1: 'Ethereum shows signs of weakening momentum and faces significant resistance, despite overall market optimism and institutional inflows.',
+                conclusionText2: 'For the next 24 hours, Ethereum is expected to trade within a range of <span class="highlight-text text-sky-300" id="conclusionRange">$2,450 to $2,580</span>. The highest expected price could reach <span class="highlight-text text-green-400" id="conclusionHighest">$2,580 to $2,650</span>. Conversely, the lowest expected price could fall to <span class="highlight-text text-red-400" id="conclusionLowest">$2,400 to $2,450</span> if key supports are breached.',
+                conclusionText3: 'Short-term caution is advised due to technical signals, but long-term fundamentals remain strong. Investors should monitor key support levels.'
+            }
+        };
+
+        let currentCryptoData = simulatedData[currentCryptoId]; // Initialize with AIXBT data
+
+        function wrapLabels(label, maxWidth) {
+            if (typeof label !== 'string' || label.length <= maxWidth) {
+                return label;
+            }
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length > maxWidth && currentLine.length > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = '';
+                }
+                currentLine += word + ' ';
+            }
+            lines.push(currentLine.trim());
+            return lines;
+        }
+
+        const defaultChartOptions = (customOptions = {}) => ({
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                              return label.join(' ');
+                            } else {
+                              return label;
+                            }
+                        }
+                    },
+                    bodyFont: { family: 'Inter', size: 12 },
+                    titleFont: { family: 'Inter', size: 14, weight: 'bold' },
+                    backgroundColor: 'rgba(30, 41, 59, 0.9)', // slate-800
+                    titleColor: '#cbd5e1', // slate-300
+                    bodyColor: '#94a3b8', // slate-400
+                    borderColor: '#475569', // slate-600
+                    borderWidth: 1,
+                    padding: 10,
+                    cornerRadius: 4,
+                },
+                legend: {
+                    labels: {
+                        color: 'rgb(203, 213, 225)', // slate-300
+                        font: { family: 'Inter', size: 12 }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { 
+                        color: 'rgb(148, 163, 184)', // slate-400
+                        font: { family: 'Inter', size: 11 },
+                        callback: function(value, index, values) {
+                            const label = this.getLabelForValue(value);
+                            return wrapLabels(label, 10);
+                        }
+                    },
+                    grid: { color: 'rgba(71, 85, 105, 0.2)' } // slate-600 with opacity
+                },
+                y: {
+                    ticks: { 
+                        color: 'rgb(148, 163, 184)', // slate-400
+                        font: { family: 'Inter', size: 11 }
+                    },
+                    grid: { color: 'rgba(71, 85, 105, 0.2)' } // slate-600 with opacity
+                }
+            },
+            ...customOptions
+        });
+
+        function updatePricePerformanceChart(data) {
+            const labels = Object.keys(data.priceChanges).map(label => wrapLabels(label, 16));
+            const values = Object.values(data.priceChanges);
+            const backgroundColors = values.map(val => val >= 0 ? 'rgba(34, 197, 94, 0.7)' : 'rgba(239, 68, 68, 0.7)'); // green-500 or red-500
+            const borderColors = values.map(val => val >= 0 ? 'rgba(34, 197, 94, 1)' : 'rgba(239, 68, 68, 1)');
+
+            if (pricePerformanceChartInstance) {
+                pricePerformanceChartInstance.data.labels = labels;
+                pricePerformanceChartInstance.data.datasets[0].data = values;
+                pricePerformanceChartInstance.data.datasets[0].backgroundColor = backgroundColors;
+                pricePerformanceChartInstance.data.datasets[0].borderColor = borderColors;
+                pricePerformanceChartInstance.update();
+            } else {
+                const ctx = document.getElementById('pricePerformanceChart').getContext('2d');
+                pricePerformanceChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '% Change',
+                            data: values,
+                            backgroundColor: backgroundColors,
+                            borderColor: borderColors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: defaultChartOptions({
+                        scales: {
+                            x: { ...defaultChartOptions().scales.x },
+                            y: { 
+                                ...defaultChartOptions().scales.y, 
+                                title: { display: true, text: '% Change', color: 'rgb(148, 163, 184)'} 
+                            }
+                        }
+                    })
+                });
+            }
+        }
+
+        function updateFearGreedChart(data) {
+            const fearGreedValue = data.fearGreedIndex;
+            if (fearGreedChartInstance) {
+                fearGreedChartInstance.data.datasets[0].data = [fearGreedValue, 100 - fearGreedValue];
+                fearGreedChartInstance.update();
+            } else {
+                const ctx = document.getElementById('fearGreedChart').getContext('2d');
+                fearGreedChartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Greed', 'Remaining'],
+                        datasets: [{
+                            label: 'Fear & Greed Index',
+                            data: [fearGreedValue, 100 - fearGreedValue],
+                            backgroundColor: [
+                                'rgba(34, 197, 94, 0.8)', // green-500
+                                'rgba(71, 85, 105, 0.5)'  // slate-600
+                            ],
+                            borderColor: [
+                                'rgba(34, 197, 94, 1)',
+                                'rgba(71, 85, 105, 1)'
+                            ],
+                            borderWidth: 1,
+                            circumference: 180,
+                            rotation: 270,
+                        }]
+                    },
+                    options: defaultChartOptions({
+                        cutout: '70%',
+                        plugins: {
+                            ...defaultChartOptions().plugins,
+                            tooltip: { enabled: false },
+                            legend: { display: false }
+                        }
+                    })
+                });
+            }
+            document.getElementById('fearGreedValue').textContent = `${fearGreedValue} (${fearGreedValue >= 70 ? 'Greed' : fearGreedValue >= 50 ? 'Neutral' : 'Fear'})`;
+        }
+
+        function updateExpectedPriceRangeChart(data) {
+            const lowest = parseFloat(data.lowestExpectedPrice.split('-')[0].replace('$', '').trim());
+            const highest = parseFloat(data.highestExpectedPrice.split('-')[1].replace('$', '').trim());
+            const current = data.currentPrice;
+
+            if (expectedPriceRangeChartInstance) {
+                expectedPriceRangeChartInstance.data.datasets[0].data = [lowest];
+                expectedPriceRangeChartInstance.data.datasets[1].data = [highest];
+                expectedPriceRangeChartInstance.options.scales.x.min = lowest * 0.9;
+                expectedPriceRangeChartInstance.options.scales.x.max = highest * 1.1;
+                expectedPriceRangeChartInstance.update();
+            } else {
+                const ctx = document.getElementById('expectedPriceRangeChart').getContext('2d');
+                expectedPriceRangeChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [wrapLabels(`${data.name} Expected 24h Price`, 25)],
+                        datasets: [
+                            {
+                                label: 'Lowest Expected',
+                                data: [lowest],
+                                backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                                borderColor: 'rgba(239, 68, 68, 1)',
+                                borderWidth: 1,
+                                barPercentage: 0.8,
+                                categoryPercentage: 0.8
+                            },
+                            {
+                                label: 'Highest Expected',
+                                data: [highest],
+                                backgroundColor: 'rgba(34, 197, 94, 0.7)',
+                                borderColor: 'rgba(34, 197, 94, 1)',
+                                borderWidth: 1,
+                                barPercentage: 0.8,
+                                categoryPercentage: 0.8
+                            }
+                        ]
+                    },
+                    options: defaultChartOptions({
+                        indexAxis: 'y',
+                        scales: {
+                            x: {
+                                ...defaultChartOptions().scales.x,
+                                min: lowest * 0.9,
+                                max: highest * 1.1,
+                                title: { display: true, text: 'Price (USD)', color: 'rgb(148, 163, 184)'}
+                            },
+                            y: { ...defaultChartOptions().scales.y }
+                        },
+                        plugins: {
+                            ...defaultChartOptions().plugins,
+                            tooltip: {
+                                callbacks: {
+                                    title: function(tooltipItems) { return ''; },
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.x !== null) {
+                                            label += '$' + context.parsed.x.toFixed(currentCryptoId === 'bitcoin' ? 0 : 3);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    })
+                });
+            }
+
+            // Update current price marker
+            const chart = expectedPriceRangeChartInstance;
+            if (chart) {
+                const yScale = chart.scales.y;
+                const xScale = chart.scales.x;
+                const originalDraw = chart.draw;
+                chart.draw = function() {
+                    originalDraw.apply(this, arguments);
+                    const ctx = this.ctx;
+                    const xPosCurrent = xScale.getPixelForValue(current);
+
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(234, 179, 8, 1)'; // amber-500
+                    ctx.lineWidth = 2;
+                    ctx.moveTo(xPosCurrent, yScale.top);
+                    ctx.lineTo(xPosCurrent, yScale.bottom);
+                    ctx.stroke();
+
+                    ctx.fillStyle = 'rgba(234, 179, 8, 1)';
+                    ctx.font = '10px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Current: $' + current.toFixed(currentCryptoId === 'bitcoin' ? 0 : 3), xPosCurrent, yScale.top - 5);
+                };
+                chart.update();
+            }
+        }
+
+        function updateSupportResistanceTable(data) {
+            const tbody = document.getElementById('supportResistanceTableBody');
+            tbody.innerHTML = ''; // Clear existing rows
+            data.supportResistance.forEach(level => {
+                const row = tbody.insertRow();
+                row.className = 'border-b border-slate-700';
+                const typeCell = row.insertCell();
+                typeCell.className = `px-6 py-4 font-medium ${level.type.includes('Support') ? 'text-green-400' : 'text-red-400'}`;
+                typeCell.textContent = level.type;
+                const priceCell = row.insertCell();
+                priceCell.className = 'px-6 py-4';
+                priceCell.textContent = level.price;
+                const notesCell = row.insertCell();
+                notesCell.className = 'px-6 py-4';
+                notesCell.textContent = level.notes;
+            });
+        }
+
+        function updateUI(data) {
+            // Update header and intro
+            document.getElementById('introCryptoName').textContent = data.name;
+            document.getElementById('introDescription').innerHTML = data.description;
+            document.getElementById('marketOverviewCryptoName').textContent = data.name;
+            document.getElementById('techAnalysisCryptoName').textContent = data.name;
+            document.getElementById('priceExpectationCryptoName').textContent = data.name;
+            document.getElementById('expectedPriceRangeChartCaption').textContent = `Visual representation of the expected 24-hour price range for ${data.name}.`;
+
+            // Update Key Market Statistics
+            document.getElementById('currentPrice').textContent = `$${data.currentPrice.toFixed(currentCryptoId === 'bitcoin' ? 0 : 6)}`;
+            const priceChange24hElem = document.getElementById('priceChange24h');
+            priceChange24hElem.textContent = `${data.priceChange24h.toFixed(2)}%`;
+            if (data.priceChange24h >= 0) {
+                priceChange24hElem.classList.remove('value-negative');
+                priceChange24hElem.classList.add('value-positive');
+            } else {
+                priceChange24hElem.classList.remove('value-positive');
+                priceChange24hElem.classList.add('value-negative');
+            }
+            document.getElementById('marketCap').textContent = data.marketCap;
+            document.getElementById('volume24h').textContent = data.volume24h;
+            document.getElementById('circulatingSupply').textContent = data.circulatingSupply;
+            document.getElementById('maxSupply').textContent = data.maxSupply;
+
+            // Update ATH/ATL
+            document.getElementById('ath').textContent = `$${data.ath.toFixed(currentCryptoId === 'bitcoin' ? 0 : 6)}`;
+            document.getElementById('athDate').textContent = data.athDate;
+            const athFromCurrent = ((data.currentPrice - data.ath) / data.ath * 100).toFixed(2);
+            const athFromCurrentElem = document.getElementById('athFromCurrent');
+            athFromCurrentElem.textContent = `${athFromCurrent}%`;
+            if (athFromCurrent >= 0) {
+                athFromCurrentElem.classList.remove('value-negative');
+                athFromCurrentElem.classList.add('value-positive');
+            } else {
+                athFromCurrentElem.classList.remove('value-positive');
+                athFromCurrentElem.classList.add('value-negative');
+            }
+
+            document.getElementById('atl').textContent = `$${data.atl.toFixed(currentCryptoId === 'bitcoin' ? 0 : 6)}`;
+            document.getElementById('atlDate').textContent = data.atlDate;
+            const atlFromCurrent = ((data.currentPrice - data.atl) / data.atl * 100).toFixed(2);
+            const atlFromCurrentElem = document.getElementById('atlFromCurrent');
+            atlFromCurrentElem.textContent = `+${atlFromCurrent}%`;
+            if (atlFromCurrent >= 0) {
+                atlFromCurrentElem.classList.remove('value-negative');
+                atlFromCurrentElem.classList.add('value-positive');
+            } else {
+                atlFromCurrentElem.classList.remove('value-positive');
+                atlFromCurrentElem.classList.add('value-negative');
+            }
+            
+            document.getElementById('volatilityContext').innerHTML = data.volatilityContext || simulatedData['aixbt'].volatilityContext; // Fallback for other cryptos
+
+            // Update Technical Indicators
+            document.getElementById('rsi').textContent = data.rsi;
+            document.getElementById('rsiNotes').textContent = data.rsiNotes;
+            document.getElementById('macd').textContent = data.macd;
+            document.getElementById('macdNotes').textContent = data.macdNotes;
+            document.getElementById('volumeTrend').textContent = data.volumeTrend;
+            document.getElementById('volumeTrendNotes').textContent = data.volumeTrendNotes;
+
+            updateSupportResistanceTable(data);
+            document.getElementById('pricePatternAnalysis').innerHTML = data.pricePatternAnalysis;
+
+            // Update Broader Market Context
+            updateFearGreedChart(data);
+            document.getElementById('aiNarrativeText').innerHTML = data.aiNarrativeText;
+            const keyInfluencesList = document.getElementById('keyInfluencesList');
+            keyInfluencesList.innerHTML = '';
+            data.keyInfluences.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'flex items-start';
+                li.innerHTML = `<span class="text-sky-300 mr-2 text-xl">🔹</span> ${item}`;
+                keyInfluencesList.appendChild(li);
+            });
+
+            // Update Price Expectations
+            document.getElementById('priceExpectationIntro').textContent = `Considering ${data.name}'s current price around $${data.currentPrice.toFixed(currentCryptoId === 'bitcoin' ? 0 : 6)}, technical indicators, and broader market sentiment, the following price expectations are projected for the next 24 hours. The "Greed" sentiment and strong AI narrative support upside potential, while the possibility of retests suggests potential dips.`;
+            document.getElementById('lowestExpectedPrice').textContent = data.lowestExpectedPrice;
+            document.getElementById('lowestExpectedNotes').textContent = data.lowestExpectedNotes;
+            document.getElementById('expectedPriceRange').textContent = data.expectedPriceRange;
+            document.getElementById('expectedPriceRangeNotes').textContent = data.expectedPriceRangeNotes;
+            document.getElementById('highestExpectedPrice').textContent = data.highestExpectedPrice;
+            document.getElementById('highestExpectedNotes').textContent = data.highestExpectedNotes;
+            updateExpectedPriceRangeChart(data);
+
+            // Update Catalysts & Risks
+            const catalystsList = document.getElementById('catalystsList');
+            catalystsList.innerHTML = '';
+            data.catalysts.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'flex items-start';
+                li.innerHTML = `<span class="text-green-500 mr-2 text-xl">💡</span> ${item}`;
+                catalystsList.appendChild(li);
+            });
+            const risksList = document.getElementById('risksList');
+            risksList.innerHTML = '';
+            data.risks.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'flex items-start';
+                li.innerHTML = `<span class="text-red-500 mr-2 text-xl">⚠️</span> ${item}`;
+                risksList.appendChild(li);
+            });
+
+            // Update Conclusion
+            document.getElementById('conclusionText1').textContent = data.conclusionText1;
+            document.getElementById('conclusionText2').innerHTML = data.conclusionText2;
+            document.getElementById('conclusionText3').textContent = data.conclusionText3;
+
+            // Clear AI commentary
+            document.getElementById('commentaryOutput').classList.add('hidden');
+            document.getElementById('commentaryText').textContent = '';
+        }
+
+        function fetchCryptoData(cryptoId) {
+            // Simulate API call and real-time updates
+            const baseData = simulatedData[cryptoId];
+            if (!baseData) {
+                document.getElementById('searchStatus').textContent = `Currency ID "${cryptoId}" not found. Try 'aixbt', 'bitcoin', or 'ethereum'.`;
+                return null;
+            }
+            document.getElementById('searchStatus').textContent = '';
+
+            // Randomize some values for "real-time" feel
+            const randomizedData = { ...baseData };
+            randomizedData.currentPrice = baseData.currentPrice * (1 + (Math.random() - 0.5) * 0.02); // +/- 1%
+            randomizedData.priceChange24h = baseData.priceChange24h + (Math.random() - 0.5) * 2; // +/- 1%
+            
+            // For AIXBT, keep the ATH/ATL context specific
+            if (cryptoId === 'aixbt') {
+                randomizedData.volatilityContext = simulatedData['aixbt'].volatilityContext;
+            } else if (cryptoId === 'bitcoin') {
+                randomizedData.volatilityContext = `Bitcoin is the world's largest cryptocurrency. Its price history shows significant volatility but generally strong long-term growth. It recently achieved a new All-Time High.`;
+            } else if (cryptoId === 'ethereum') {
+                randomizedData.volatilityContext = `Ethereum is the second-largest cryptocurrency, known for its smart contract platform. Its price is influenced by the growth of DeFi and NFTs, but it also experiences volatility typical of crypto assets.`;
+            }
+
+
+            return randomizedData;
+        }
+
+        function handleSearch() {
+            const input = document.getElementById('cryptoSearchInput').value.toLowerCase().trim();
+            if (input && simulatedData[input]) {
+                currentCryptoId = input;
+                currentCryptoData = fetchCryptoData(currentCryptoId);
+                updateUI(currentCryptoData);
+            } else {
+                document.getElementById('searchStatus').textContent = `Currency ID "${input}" not found. Try 'aixbt', 'bitcoin', or 'ethereum'.`;
+            }
+        }
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            currentCryptoData = fetchCryptoData(currentCryptoId);
+            updateUI(currentCryptoData);
+
+            // Set up real-time updates (simulated)
+            setInterval(() => {
+                currentCryptoData = fetchCryptoData(currentCryptoId);
+                updateUI(currentCryptoData);
+            }, 5000); // Update every 5 seconds
+
+            document.getElementById('searchCryptoBtn').addEventListener('click', handleSearch);
+            document.getElementById('cryptoSearchInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleSearch();
+                }
+            });
+        });
+
+        // Gemini API Integration for Price Commentary (Updated to be dynamic)
+        document.getElementById('generateCommentaryBtn').addEventListener('click', async () => {
+            const commentaryOutputDiv = document.getElementById('commentaryOutput');
+            const commentaryTextP = document.getElementById('commentaryText');
+            const commentaryLoadingDiv = document.getElementById('commentaryLoading');
+
+            commentaryOutputDiv.classList.remove('hidden');
+            commentaryTextP.textContent = '';
+            commentaryLoadingDiv.classList.remove('hidden');
+
+            const data = currentCryptoData; // Use the currently displayed data
+
+            const prompt = `Based on the following ${data.name} cryptocurrency data:
+            - Current Price: $${data.currentPrice.toFixed(6)}
+            - Lowest Expected Price (24h): ${data.lowestExpectedPrice}
+            - Highest Expected Price (24h): ${data.highestExpectedPrice}
+            - Expected Trading Range (24h): ${data.expectedPriceRange}
+            - RSI (14-day): ${data.rsi} (${data.rsiNotes})
+            - MACD: ${data.macd} (${data.macdNotes})
+            - 24h Volume Trend: ${data.volumeTrend} (${data.volumeTrendNotes})
+            - Key Narrative: ${data.aiNarrativeText.replace(/<[^>]*>?/gm, '')}
+            - Crypto Fear & Greed Index: ${data.fearGreedIndex} (Greed)
+            - Recent Price Patterns: ${data.pricePatternAnalysis.replace(/<[^>]*>?/gm, '')}
+
+            Provide a concise, expert commentary (around 3-4 sentences) on the ${data.name} 24-hour price outlook. Focus on what these indicators suggest for its short-term movement, including potential upside and downside, and key factors influencing it.`;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    commentaryTextP.textContent = text;
+                } else {
+                    commentaryTextP.textContent = 'Failed to generate commentary. Please try again.';
+                }
+            } catch (error) {
+                console.error('Error calling Gemini API:', error);
+                commentaryTextP.textContent = 'An error occurred while generating commentary. Please check console for details.';
+            } finally {
+                commentaryLoadingDiv.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
